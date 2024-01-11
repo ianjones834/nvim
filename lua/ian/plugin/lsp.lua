@@ -1,72 +1,40 @@
-local filetypes = {
-  'lua',
-  'cpp',
-  'javascript',
-  'typescript',
-}
-
 return {
   {
     "neovim/nvim-lspconfig",
-    ft = filetypes,
+    ft = {
+      "lua",
+      "cpp",
+      "javascript",
+      "typescript",
+    },
     config = function()
-      local capabilities = require('cmp_nvim_lsp').default_capabilities()
-      local lspconfig = require('lspconfig')
-
-      lspconfig.lua_ls.setup({
-        capabilities = capabilities,
-        on_attach = function()
-          vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer = 0})
-          vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer = 0})
-          vim.keymap.set("n", "[d", vim.diagnostic.goto_next, {buffer = 0})
-          vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, {buffer = 0})
-          vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, {buffer = 0})
-          vim.keymap.set("n", "[l", "<cmd>Telescope diagnostics<cr>", {buffer = 0})
-        end,
-        settings = {
-          Lua = {
-            diagnostics = {
-              globals = {
-                "vim",
-              }
-            }
-          }
-        }
+      require("mason").setup()
+      require("mason-lspconfig").setup({
+        ensure_installed = {"lua_ls"},
       })
 
-      lspconfig.clangd.setup({
-        capabilities = capabilities,
-        on_attach = function()
-          vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer = 0})
-          vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer = 0})
-          vim.keymap.set("n", "[d", vim.diagnostic.goto_next, {buffer = 0})
-          vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, {buffer = 0})
-          vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, {buffer = 0})
-          vim.keymap.set("n", "[l", "<cmd>Telescope diagnostics<cr>", {buffer = 0})
+      require("mason-lspconfig").setup_handlers({
+        function(server_name)
+          require("lspconfig")[server_name].setup({
+            capabilities = require("cmp_nvim_lsp").default_capabilities(),
+            on_attach = function()
+              vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer = 0})
+              vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer = 0})
+              vim.keymap.set("n", "[d", vim.diagnostic.goto_next, {buffer = 0})
+              vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, {buffer = 0})
+              vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, {buffer = 0})
+              vim.keymap.set("n", "[l", "<cmd>Telescope diagnostics<cr>", {buffer = 0})
+            end,
+          })
         end,
-      })
-
-      lspconfig.tsserver.setup({
-        capabilities = capabilities,
-        on_attach = function ()
-          vim.keymap.set("n", "K", vim.lsp.buf.hover, {buffer = 0})
-          vim.keymap.set("n", "gd", vim.lsp.buf.definition, {buffer = 0})
-          vim.keymap.set("n", "[d", vim.diagnostic.goto_next, {buffer = 0})
-          vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, {buffer = 0})
-          vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, {buffer = 0})
-          vim.keymap.set("n", "[l", "<cmd>Telescope diagnostics<cr>", {buffer = 0})
-        end,
-        cmd = {
-          "typescript-language-server",
-          "--stdio",
-        },
       })
     end,
     dependencies = {
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
       "hrsh7th/nvim-cmp"
     }
   },
-
   {
     "hrsh7th/nvim-cmp",
     lazy = true,
