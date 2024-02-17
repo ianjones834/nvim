@@ -6,6 +6,7 @@ return {
       "cpp",
       "javascript",
       "typescript",
+      "c",
     },
     config = function()
       require("mason").setup()
@@ -78,5 +79,10 @@ return {
       "hrsh7th/cmp-path",
       "L3MON4D3/LuaSnip",
     }
+  },
+  {
+    "L3MON4D3/LuaSnip",
+    build = "make install_jsregexp",
+
   }
 }
